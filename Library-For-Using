@@ -384,7 +384,7 @@ function Tools:CreateWindow(Title)
         local UIPadding_3 = Instance.new("UIPadding")
 
         Box_1.Parent = Items_1
-        Box_1.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        Box_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         Box_1.BackgroundTransparency = 0.44999998807907104
         Box_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Box_1.BorderSizePixel = 0
@@ -516,7 +516,7 @@ function Tools:CreateWindow(Title)
 
         Toggle_1.Name = "Toggle"
         Toggle_1.Parent = Items_1
-        Toggle_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Toggle_1.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
         Toggle_1.BackgroundTransparency = 0.44999998807907104
         Toggle_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Toggle_1.BorderSizePixel = 0

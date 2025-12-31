@@ -30,7 +30,7 @@ function Tools:CreateWindow(Title)
     Main_1.Name = "Main"
     Main_1.Parent = Tools
     Main_1.AnchorPoint = Vector2.new(0.5, 0.5)
-    Main_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Main_1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     Main_1.BackgroundTransparency = 0.15
     Main_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Main_1.BorderSizePixel = 0
@@ -516,7 +516,7 @@ function Tools:CreateWindow(Title)
 
         Toggle_1.Name = "Toggle"
         Toggle_1.Parent = Items_1
-        Toggle_1.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        Toggle_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         Toggle_1.BackgroundTransparency = 0.44999998807907104
         Toggle_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Toggle_1.BorderSizePixel = 0

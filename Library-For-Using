@@ -270,7 +270,7 @@ function Tools:CreateWindow(Title)
 
         Label_1.Name = "Button"
         Label_1.Parent = Items_1
-        Label_1.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        Label_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         Label_1.BackgroundTransparency = 0.44999998807907104
         Label_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Label_1.BorderSizePixel = 0
@@ -528,14 +528,15 @@ function Tools:CreateWindow(Title)
         ToggleHolder_1.Name = "ToggleHolder"
         ToggleHolder_1.Parent = Toggle_1
         ToggleHolder_1.AnchorPoint = Vector2.new(0, 0.5)
-        ToggleHolder_1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        ToggleHolder_1.BackgroundTransparency = 0.9
+        ToggleHolder_1.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        ToggleHolder_1.BackgroundTransparency = 0.5
         ToggleHolder_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         ToggleHolder_1.BorderSizePixel = 0
         ToggleHolder_1.Position = UDim2.new(0.699999988, 1, 0.5, 0)
         ToggleHolder_1.Size = UDim2.new(0, 50, 0, 16)
 
         UICorner_6.Parent = ToggleHolder_1
+        UICorner_6.CornerRadius = UDim.new(0, 45)
 
         Toggler_1.Name = "Toggler"
         Toggler_1.Parent = ToggleHolder_1
@@ -554,8 +555,8 @@ function Tools:CreateWindow(Title)
         TogglerIndicator_1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         TogglerIndicator_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
         TogglerIndicator_1.BorderSizePixel = 0
-        TogglerIndicator_1.Position = UDim2.new(0, 1, 0, 1)
-        TogglerIndicator_1.Size = UDim2.new(0, 14, 0, 14)
+        TogglerIndicator_1.Position = UDim2.new(0, 2, 0, 2)
+        TogglerIndicator_1.Size = UDim2.new(0, 12, 0, 12)
 
         UICorner_7.Parent = TogglerIndicator_1
         UICorner_7.CornerRadius = UDim.new(0, 45)
@@ -595,25 +596,57 @@ function Tools:CreateWindow(Title)
 
         Toggler_1.MouseButton1Click:Connect(
             function()
-                local tweenInfo = TweenInfo.new(0.3)
+                if debounce then return end
+                debounce = true
+                
+                local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
                 if not toggled then
-                    local onTween =
-                        TweenService:Create(TogglerIndicator_1, tweenInfo, {Position = UDim2.new(0, 35, 0, 1)})
-                    onTween:Play()
-                    local onTween2 = TweenService:Create(ToggleHolder_1, tweenInfo, {BackgroundTransparency = 0.5})
-                    onTween:Play()
+                    -- Когда включается: двигаем индикатор и делаем фон темнее
+                    local onTween1 = TweenService:Create(
+                        TogglerIndicator_1, 
+                        tweenInfo, 
+                        {Position = UDim2.new(0, 36, 0, 2)}
+                    )
+                    local onTween2 = TweenService:Create(
+                        ToggleHolder_1, 
+                        tweenInfo, 
+                        {BackgroundTransparency = 0.7}
+                    )
+                    local onTween3 = TweenService:Create(
+                        TogglerIndicator_1,
+                        tweenInfo,
+                        {BackgroundColor3 = Color3.fromRGB(139, 92, 246)}
+                    )
+                    onTween1:Play()
                     onTween2:Play()
+                    onTween3:Play()
                     toggled = true
                 else
-                    local offTween =
-                        TweenService:Create(TogglerIndicator_1, tweenInfo, {Position = UDim2.new(0, 1, 0, 1)})
-                    local offTween2 = TweenService:Create(ToggleHolder_1, tweenInfo, {BackgroundTransparency = 0.9})
-                    offTween:Play()
+                    -- Когда выключается: двигаем индикатор обратно и делаем фон светлее
+                    local offTween1 = TweenService:Create(
+                        TogglerIndicator_1, 
+                        tweenInfo, 
+                        {Position = UDim2.new(0, 2, 0, 2)}
+                    )
+                    local offTween2 = TweenService:Create(
+                        ToggleHolder_1, 
+                        tweenInfo, 
+                        {BackgroundTransparency = 0.5}
+                    )
+                    local offTween3 = TweenService:Create(
+                        TogglerIndicator_1,
+                        tweenInfo,
+                        {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}
+                    )
+                    offTween1:Play()
                     offTween2:Play()
+                    offTween3:Play()
                     toggled = false
                 end
 
+                wait(0.2)
+                debounce = false
                 pcall(Callback, toggled)
             end
         )

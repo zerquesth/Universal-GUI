@@ -39,6 +39,7 @@ function Tools:CreateWindow(Title)
     Main_1.Size = UDim2.new(0, 222, 0, 140)
     Main_1.Visible = true
     Main_1.Active = true
+    Main_1.ClipsDescendants = true
 
     UICorner_1.Parent = Main_1
 
@@ -103,8 +104,9 @@ function Tools:CreateWindow(Title)
     Elements_1.BackgroundTransparency = 1
     Elements_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Elements_1.BorderSizePixel = 0
-    Elements_1.Position = UDim2.new(0, 0, 0.19, 0)
+    Elements_1.Position = UDim2.new(0, 0, 0.185, 0)
     Elements_1.Size = UDim2.new(0, 222, 0, 104)
+    Elements_1.ClipsDescendants = true
 
     Items_1.Name = "Items"
     Items_1.Parent = Elements_1
@@ -142,24 +144,77 @@ function Tools:CreateWindow(Title)
     -- Переменная состояния скрытия
     local isGUIHidden = false
     local minusImage = "rbxassetid://71200568600957"
-    local plusImage = "rbxassetid://106911213429191" -- Временный ID для плюса
-    
+    local plusImage = "rbxassetid://106911213429191"
+    local animating = false -- Флаг для предотвращения повторных нажатий во время анимации
+
     -- Функция для скрытия/показа GUI
     local function toggleGUI()
-        isGUIHidden = not isGUIHidden
+        if animating then return end -- Если анимация уже идет, выходим
+        animating = true
         
         if isGUIHidden then
-            -- Скрываем элементы GUI
-            Elements_1.Visible = false
-            Main_1.Size = UDim2.new(0, 222, 0, 26)
-            -- Меняем на плюс
-            HideButton_1.Image = plusImage
-        else
-            -- Показываем элементы GUI
-            Elements_1.Visible = true
-            Main_1.Size = UDim2.new(0, 222, 0, 140)
-            -- Меняем на минус
+            -- ПОКАЗЫВАЕМ элементы GUI
+            
+            -- Сначала меняем иконку
             HideButton_1.Image = minusImage
+            
+            -- Анимируем размер Main_1 обратно к полному размеру
+            local mainTween = TweenService:Create(
+                Main_1, 
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Size = UDim2.new(0, 222, 0, 140)}
+            )
+            mainTween:Play()
+            
+            -- Анимируем Elements_1 - плавно выдвигаем вниз
+            Elements_1.Visible = true
+            Elements_1.Position = UDim2.new(0, 0, -1, 0) -- Начинаем сверху (за пределами видимости)
+            Elements_1.Size = UDim2.new(0, 222, 0, 104)
+            
+            local elementsTween = TweenService:Create(
+                Elements_1, 
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 0, 0.185, 0)} -- Возвращаем на исходную позицию
+            )
+            elementsTween:Play()
+            
+            -- Ждем завершения анимации
+            elementsTween.Completed:Connect(function()
+                isGUIHidden = false
+                animating = false
+            end)
+        else
+            -- СКРЫВАЕМ элементы GUI
+            
+            -- Анимируем Elements_1 - плавно поднимаем вверх
+            local elementsTween = TweenService:Create(
+                Elements_1, 
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                {
+                    Position = UDim2.new(0, 0, -0.2, 0), -- Поднимаем выше верхней границы
+                    Size = UDim2.new(0, 222, 0, 0) -- Уменьшаем высоту до 0
+                }
+            )
+            elementsTween:Play()
+            
+            -- После завершения анимации скрытия элементов, меняем размер Main_1 и иконку
+            elementsTween.Completed:Connect(function()
+                Elements_1.Visible = false
+                
+                -- Анимируем уменьшение Main_1 до высоты Topbar
+                local mainTween = TweenService:Create(
+                    Main_1, 
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {Size = UDim2.new(0, 222, 0, 26)}
+                )
+                mainTween:Play()
+                
+                -- Меняем иконку после завершения анимации
+                HideButton_1.Image = plusImage
+                
+                isGUIHidden = true
+                animating = false
+            end)
         end
     end
 

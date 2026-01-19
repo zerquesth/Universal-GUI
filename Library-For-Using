@@ -63,7 +63,7 @@ function Tools:CreateWindow(Title)
     Title_1.BorderSizePixel = 0
     Title_1.Size = UDim2.new(0, 160, 0, 26)
     Title_1.Font = Enum.Font.Highway
-    Title_1.Text = "Silent Hub - Fly GUI || V1.2"
+    Title_1.Text = "Silent Hub - Fly GUI || V1.3"
     Title_1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title_1.TextSize = 14
     Title_1.TextTruncate = Enum.TextTruncate.SplitWord
@@ -72,7 +72,6 @@ function Tools:CreateWindow(Title)
     UIPadding_1.Parent = Title_1
     UIPadding_1.PaddingLeft = UDim.new(0, 8)
 
-    -- Кнопка закрытия (крестик) - ИСПРАВЛЕНО
     CloseButton_1.Name = "CloseButton"
     CloseButton_1.Parent = Topbar_1
     CloseButton_1.Active = true
@@ -82,10 +81,9 @@ function Tools:CreateWindow(Title)
     CloseButton_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     CloseButton_1.BorderSizePixel = 0
     CloseButton_1.Position = UDim2.new(0.95, 0, 0.5, 0)
-    CloseButton_1.Size = UDim2.new(0, 16, 0, 16) -- Нормальный размер
-    CloseButton_1.Image = "rbxassetid://87928189379210" -- Крестик
+    CloseButton_1.Size = UDim2.new(0, 16, 0, 16)
+    CloseButton_1.Image = "rbxassetid://87928189379210"
 
-    -- Кнопка скрытия GUI (минус/плюс) - ИСПРАВЛЕНО
     HideButton_1.Name = "HideButton"
     HideButton_1.Parent = Topbar_1
     HideButton_1.Active = true
@@ -95,8 +93,8 @@ function Tools:CreateWindow(Title)
     HideButton_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     HideButton_1.BorderSizePixel = 0
     HideButton_1.Position = UDim2.new(0.85, 0, 0.5, 0)
-    HideButton_1.Size = UDim2.new(0, 16, 0, 16) -- Нормальный размер
-    HideButton_1.Image = "rbxassetid://71200568600957" -- Минус
+    HideButton_1.Size = UDim2.new(0, 16, 0, 16)
+    HideButton_1.Image = "rbxassetid://71200568600957"
 
     Elements_1.Name = "Elements"
     Elements_1.Parent = Main_1
@@ -141,24 +139,19 @@ function Tools:CreateWindow(Title)
     UIPadding_4.PaddingLeft = UDim.new(0, 8)
     UIPadding_4.PaddingTop = UDim.new(0, 4)
 
-    -- Переменная состояния скрытия
     local isGUIHidden = false
     local minusImage = "rbxassetid://71200568600957"
     local plusImage = "rbxassetid://106911213429191"
-    local animating = false -- Флаг для предотвращения повторных нажатий во время анимации
+    local animating = false
 
-    -- Функция для скрытия/показа GUI
     local function toggleGUI()
-        if animating then return end -- Если анимация уже идет, выходим
+        if animating then return end
         animating = true
         
         if isGUIHidden then
-            -- ПОКАЗЫВАЕМ элементы GUI
-            
-            -- Сначала меняем иконку
+        
             HideButton_1.Image = minusImage
-            
-            -- Анимируем размер Main_1 обратно к полному размеру
+   
             local mainTween = TweenService:Create(
                 Main_1, 
                 TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -166,42 +159,36 @@ function Tools:CreateWindow(Title)
             )
             mainTween:Play()
             
-            -- Анимируем Elements_1 - плавно выдвигаем вниз
             Elements_1.Visible = true
-            Elements_1.Position = UDim2.new(0, 0, -1, 0) -- Начинаем сверху (за пределами видимости)
+            Elements_1.Position = UDim2.new(0, 0, -1, 0)
             Elements_1.Size = UDim2.new(0, 222, 0, 104)
             
             local elementsTween = TweenService:Create(
                 Elements_1, 
                 TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0, 0, 0.185, 0)} -- Возвращаем на исходную позицию
+                {Position = UDim2.new(0, 0, 0.185, 0)}
             )
             elementsTween:Play()
             
-            -- Ждем завершения анимации
             elementsTween.Completed:Connect(function()
                 isGUIHidden = false
                 animating = false
             end)
         else
-            -- СКРЫВАЕМ элементы GUI
             
-            -- Анимируем Elements_1 - плавно поднимаем вверх
             local elementsTween = TweenService:Create(
                 Elements_1, 
                 TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
                 {
-                    Position = UDim2.new(0, 0, -0.2, 0), -- Поднимаем выше верхней границы
-                    Size = UDim2.new(0, 222, 0, 0) -- Уменьшаем высоту до 0
+                    Position = UDim2.new(0, 0, -0.2, 0),
+                    Size = UDim2.new(0, 222, 0, 0)
                 }
             )
             elementsTween:Play()
             
-            -- После завершения анимации скрытия элементов, меняем размер Main_1 и иконку
             elementsTween.Completed:Connect(function()
                 Elements_1.Visible = false
                 
-                -- Анимируем уменьшение Main_1 до высоты Topbar
                 local mainTween = TweenService:Create(
                     Main_1, 
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -209,7 +196,6 @@ function Tools:CreateWindow(Title)
                 )
                 mainTween:Play()
                 
-                -- Меняем иконку после завершения анимации
                 HideButton_1.Image = plusImage
                 
                 isGUIHidden = true
@@ -218,7 +204,6 @@ function Tools:CreateWindow(Title)
         end
     end
 
-    -- Обработчики событий для кнопки скрытия
     HideButton_1.MouseEnter:Connect(
         function()
             local tween =

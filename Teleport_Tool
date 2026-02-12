@@ -1,0 +1,20 @@
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+local Tool = Instance.new("Tool")
+Tool.Name = "Teleport Tool"
+Tool.RequiresHandle = false
+Tool.CanBeDropped = true
+Tool.Parent = LocalPlayer.Backpack
+
+Tool.Activated:Connect(function()
+    local Character = LocalPlayer.Character
+    if Character and Character:FindFirstChild("HumanoidRootPart") then
+        local HRP = Character.HumanoidRootPart
+        local Target = Mouse.Hit
+        
+        if Target then
+            HRP.CFrame = CFrame.new(Target.Position)
+        end
+    end
+end)

@@ -1,20 +1,33 @@
-local LocalPlayer = game:GetService("Players").LocalPlayer
+-- [[ Universal Teleport Tool ]]
+-- [[ Made by zerquesth ]]
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
-local Tool = Instance.new("Tool")
-Tool.Name = "Teleport Tool"
-Tool.RequiresHandle = false
-Tool.CanBeDropped = true
-Tool.Parent = LocalPlayer.Backpack
+local function createTeleportTool()
+    local tool = Instance.new("Tool")
+    tool.Name = "Teleport Tool"
+    tool.RequiresHandle = false
+    tool.CanBeDropped = true
+    tool.Parent = LocalPlayer.Backpack
 
-Tool.Activated:Connect(function()
-    local Character = LocalPlayer.Character
-    if Character and Character:FindFirstChild("HumanoidRootPart") then
-        local HRP = Character.HumanoidRootPart
-        local Target = Mouse.Hit
-        
-        if Target then
-            HRP.CFrame = CFrame.new(Target.Position)
+    tool.Activated:Connect(function()
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local hrp = character.HumanoidRootPart
+            local target = Mouse.Hit
+            if target then
+                hrp.CFrame = CFrame.new(target.Position)
+            end
         end
+    end)
+end
+
+createTeleportTool()
+
+LocalPlayer.CharacterAdded:Connect(function()
+    if not LocalPlayer.Backpack:FindFirstChild("Teleport Tool") then
+        createTeleportTool()
     end
 end)

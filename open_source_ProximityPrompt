@@ -1,0 +1,17 @@
+--[[
+    removes the hold cooldown from all proximity prompts, might be useful, idk
+]]
+
+local function instantPP(prompt)
+    if prompt:IsA('ProximityPrompt') then
+        prompt.HoldDuration = 0
+    end
+end
+
+workspace.DescendantAdded:Connect(function(descendant)
+    instantPP(descendant)
+end)
+
+for _, prompt in ipairs(workspace:GetDescendants()) do
+    instantPP(prompt)
+end

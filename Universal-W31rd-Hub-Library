@@ -1010,6 +1010,9 @@ function window_manager:AddWindow(title, settings)
         corner.Parent = title_bar
         if toggle_button then
             toggle_button.Position = UDim2.new(0, 5, 0, vertical_padding)
+            local toggle_corner = Instance.new("UICorner")
+            toggle_corner.CornerRadius = UDim.new(0, 5)
+            toggle_corner.Parent = toggle_button
         end
         if title_label then
             local left_padding = 25
@@ -1370,7 +1373,7 @@ function window_manager:AddWindow(title, settings)
                     local scroller = tab_content:FindFirstChild("TabScroller")
                     button.Parent = scroller or tab_content
                     button.Text = name
-                    button.Size = UDim2.new(0, get_text_width(button), 0, 20)
+                    button.Size = UDim2.new(0, get_text_width(button) + 30, 0, 20)
                     button.ZIndex = button.ZIndex + window_count * 10
                     local button_background = button:GetChildren()[1]
                     button_background.ZIndex = button_background.ZIndex + window_count * 10

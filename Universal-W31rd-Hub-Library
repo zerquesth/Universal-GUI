@@ -1138,6 +1138,13 @@ function window_manager:AddWindow(title, settings)
                 if toggle_button.Parent:FindFirstChild("Base") then
                     toggle_button.Parent:FindFirstChild("Base").Transparency = 1
                 end
+                if tween then
+                    tween.Completed:Connect(function()
+                        can_toggle = true
+                    end)
+                else
+                    can_toggle = true
+                end
             else
                 for child, state in pairs(saved_states) do
                     child.Visible = state
@@ -1148,11 +1155,15 @@ function window_manager:AddWindow(title, settings)
                 if toggle_button.Parent:FindFirstChild("Base") then
                     toggle_button.Parent:FindFirstChild("Base").Transparency = settings.title_bar_transparency
                 end
+                if tween then
+                    tween.Completed:Connect(function()
+                        can_toggle = true
+                    end)
+                else
+                    can_toggle = true
+                end
             end
             expanded = not expanded
-            task.delay(settings.tween_time, function()
-                can_toggle = true
-            end)
         end)
     end
     do

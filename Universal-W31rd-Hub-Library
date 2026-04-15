@@ -1117,51 +1117,67 @@ function window_manager:AddWindow(title, settings)
     do
         local toggle_button = window:FindFirstChild("Bar"):FindFirstChild("Toggle")
         local expanded = true
-        local can_toggle = true
+        local is_animating = false
+        local current_tween = nil
         local saved_states = {}
-        local original_height = window.AbsoluteSize.Y
+        local original_height = nil
+        local function cancel_current_tween()
+            if current_tween and current_tween.PlaybackState ~= Enum.PlaybackState.Completed then
+                current_tween:Cancel()
+            end
+            current_tween = nil
+        end
         toggle_button.MouseButton1Click:Connect(function()
-            if not can_toggle then
+            if is_animating then
                 return
             end
-            can_toggle = false
+            is_animating = true
+            cancel_current_tween()
             if expanded then
                 saved_states = {}
-                for index, child in ipairs(window:FindFirstChild("Tabs"):GetChildren()) do
-                    saved_states[child] = child.Visible
-                    child.Visible = false
+                local tabs = window:FindFirstChild("Tabs")
+                if tabs then
+                    for index, child in ipairs(tabs:GetChildren()) do
+                        saved_states[child] = child.Visible
+                        child.Visible = false
+                    end
                 end
                 resizer.Active = false
                 original_height = window.AbsoluteSize.Y
                 tween_object(toggle_button, {Rotation = 0}, settings.tween_time)
-                local tween = tween_object(window, {Size = UDim2.new(0, window.AbsoluteSize.X, 0, 26)}, settings.tween_time)
+                local target_size = UDim2.new(0, window.AbsoluteSize.X, 0, 26)
+                local tween_info = TweenInfo.new(settings.tween_time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                current_tween = TweenService:Create(window, tween_info, {Size = target_size})
+                current_tween:Play()
                 if toggle_button.Parent:FindFirstChild("Base") then
                     toggle_button.Parent:FindFirstChild("Base").Transparency = 1
                 end
-                if tween then
-                    tween.Completed:Connect(function()
-                        can_toggle = true
-                    end)
-                else
-                    can_toggle = true
-                end
+                current_tween.Completed:Connect(function()
+                    is_animating = false
+                    current_tween = nil
+                end)
             else
-                for child, state in pairs(saved_states) do
-                    child.Visible = state
+                local tabs = window:FindFirstChild("Tabs")
+                if tabs then
+                    for child, state in pairs(saved_states) do
+                        if child and child.Parent then
+                            child.Visible = state
+                        end
+                    end
                 end
                 resizer.Active = true
                 tween_object(toggle_button, {Rotation = 0}, settings.tween_time)
-                local tween = tween_object(window, {Size = UDim2.new(0, window.AbsoluteSize.X, 0, original_height)}, settings.tween_time)
+                local target_size = UDim2.new(0, window.AbsoluteSize.X, 0, original_height or settings.min_size.Y)
+                local tween_info = TweenInfo.new(settings.tween_time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                current_tween = TweenService:Create(window, tween_info, {Size = target_size})
+                current_tween:Play()
                 if toggle_button.Parent:FindFirstChild("Base") then
                     toggle_button.Parent:FindFirstChild("Base").Transparency = settings.title_bar_transparency
                 end
-                if tween then
-                    tween.Completed:Connect(function()
-                        can_toggle = true
-                    end)
-                else
-                    can_toggle = true
-                end
+                current_tween.Completed:Connect(function()
+                    is_animating = false
+                    current_tween = nil
+                end)
             end
             expanded = not expanded
         end)

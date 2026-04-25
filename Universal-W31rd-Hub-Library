@@ -87,7 +87,7 @@ local keybind_input_background = Instance.new("ImageLabel")
 local windows_container = Instance.new("Frame")
 
 screen_gui.Name = "imgui"
-screen_gui.Parent = game:GetService("CoreGui") or gethui()
+screen_gui.Parent = game:GetService("CoreGui")
 
 prefabs.Name = "Prefabs"
 prefabs.Parent = screen_gui
@@ -817,16 +817,12 @@ windows_container.BackgroundTransparency = 1
 windows_container.Position = UDim2.new(0, 20, 0, 20)
 windows_container.Size = UDim2.new(1, 20, 1, -20)
 
-script.Parent = screen_gui
-
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local prefabs = script.Parent:WaitForChild("Prefabs")
-local windows_container = script.Parent:FindFirstChild("Windows")
 local binding_state = {binding = false}
 local connections = {}
 local function add_connection(connection)
@@ -843,8 +839,8 @@ local function disconnect_all()
 end
 add_connection(UserInputService.InputBegan:Connect(function(input, game_processed)
     if input.KeyCode == (typeof(config.toggle_key) == "EnumItem" and config.toggle_key or Enum.KeyCode.RightShift) then
-        if script.Parent and not binding_state.binding then
-            script.Parent.Enabled = not script.Parent.Enabled
+        if screen_gui and not binding_state.binding then
+            screen_gui.Enabled = not screen_gui.Enabled
         end
     end
 end))
@@ -1942,8 +1938,8 @@ function window_manager:AddWindow(title, settings)
     end
     return window_functions, window
 end
-script.AncestryChanged:Connect(function()
-    if not script.Parent then
+screen_gui.AncestryChanged:Connect(function()
+    if not screen_gui.Parent then
         disconnect_all()
     end
 end)

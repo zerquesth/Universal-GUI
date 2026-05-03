@@ -1187,10 +1187,19 @@ function window_manager:AddWindow(title, settings)
         local particle_loop = nil
         local function update_tab_buttons_size()
             local total_width = 0
-            local padding = tab_buttons_container:FindFirstChildOfClass("UIListLayout").Padding.Offset or 0
+            local layout = tab_buttons_container:FindFirstChildOfClass("UIListLayout")
+            local padding = 0
+            if layout then
+                padding = layout.Padding.Offset
+            end
             for index, button in ipairs(tab_buttons_container:GetChildren()) do
                 if button:IsA("TextButton") then
-                    total_width = total_width + button.AbsoluteSize.X + padding
+                    local success, size = pcall(function()
+                        return button.AbsoluteSize.X
+                    end)
+                    if success and size then
+                        total_width = total_width + size + padding
+                    end
                 end
             end
             tab_buttons_container.Size = UDim2.new(0, total_width, 1, 0)
